@@ -1,28 +1,84 @@
-### TECNOLOGIAS A USAR
+### Tecnologías Utilizadas
 
-USAREMOS LAS TECNOLOGIAS COMO 
+Frontend
 
-- FRONTEND
-    - REACT VITE TS  DOM/NATIVE
-    - TAILWINGS
-    - APIREST
-- BACKEND
-    - NODE.JS
-    - MYSQL
-    - PRISMA
-    - EXPRESS
-    - (OP) DOCKER
-- DISENO DE UI/UX
-    - PENPOT
-- URL PARA IMAGENES
-    - Cloudinary
-- Stackblicks  un medio despliegue para el frontend prácticas
-- Pretier
-- JWT
-- CORDS
-- MIDDWALARE
-- PENPOT OPEN SOURSE PARA UI/UX]
-- LEAFFLET .Js
-- ARQUITECTURA FRONTEND Y BACKEND
-- Clean arquitecture y MVVM
-- Vim para programar o tene tu propio editor o tu forma de programar
+React + Vite + TypeScript (DOM / Native)
+
+TailwindCSS
+
+API REST
+
+Leaflet.js (mapas)
+
+Clean Architecture / MVVM
+
+Prettier
+
+CORS
+
+Middleware personalizado
+
+Cloudinary (almacenamiento de imágenes)
+
+StackBlitz (pruebas y despliegues rápidos)
+
+Vim u otros editores
+
+
+Backend
+
+Node.js
+
+Express
+
+MySQL
+
+Prisma ORM
+
+JWT
+
+Docker (opcional)
+
+Arquitectura modular / limpia
+
+
+Diseño UI/UX
+
+Penpot (Open Source)
+
+
+
+---
+
+### Instalación y Ejecución
+
+🔹 1. Clonar el Frontend
+
+git clone https://github.com/Ro-Are-Lo/rastreo_gps_frontend
+cd rastreo_gps_frontend
+
+🔹 2. Instalar dependencias del Frontend
+
+npm install
+
+🔹 3. Ejecutar el entorno de desarrollo del Frontend
+
+npm run dev
+
+
+---
+
+### Backend (Opcional)
+
+🔹 4. Clonar el Backend
+
+git clone https://github.com/Ro-Are-Lo/rastreo_gps_backend
+cd rastreo_gps_backend
+
+🔹 5. Instalar dependencias del Backend
+
+npm install
+
+🔹 6. Ejecutar el Backend
+
+npm run dev
