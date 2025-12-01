@@ -1,6 +1,8 @@
 // src/components/UserTable.tsx
-import React from 'react';
-import { User } from '../models/User'; 
+import React from "react";
+import type { User } from "../models/User";
+import { useAuth } from "../context/AuthContext";
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 
 interface Props {
   usuarios: User[];
@@ -10,55 +12,84 @@ interface Props {
 }
 
 const UserTable: React.FC<Props> = ({ usuarios, onEdit, onDelete, onView }) => {
+  const { user: currentUser } = useAuth();
+
+  //Función auxiliar para obtener el nombre de rol
+  const getRoleName = (role: any) => {
+    if (typeof role === "string") return role;
+    if (role?.rol?.nombre) return role.rol.nombre;
+    return "Sin rol";
+  };
+
+  // Verificar si el usuario actual es admin
+  const isAdmin = currentUser?.roles?.some((r) => getRoleName(r) === "admin");
+
   return (
-    <table className="min-w-full table-auto border border-gray-300">
-      <thead>
-        <tr className="bg-gray-200">
-          <th className="px-4 py-2 border">ID</th>
-          <th className="px-4 py-2 border">Nombre</th>
-          <th className="px-4 py-2 border">Usuario</th>
-          <th className="px-4 py-2 border">Roles</th>
-          <th className="px-4 py-2 border">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {usuarios.map((user) => (
-          <tr key={user.usuario_id} className="hover:bg-gray-100">
-            <td className="px-4 py-2 border">{user.usuario_id}</td>
-            <td className="px-4 py-2 border">
-              {user.nombre} {user.apellido_paterno}
-            </td>
-            <td className="px-4 py-2 border">{user.username}</td>
-            <td className="px-4 py-2 border">
-              {user.roles?.map((r) => r.rol.nombre).join(', ') || 'Sin rol'}
-            </td>
-            <td className="px-4 py-2 border space-x-2">
-              
-              
-              
-              <button
-                className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-700"
-                onClick={() => onView(user)}
-              >
-                Ver
-              </button>
-              <button
-                className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700"
-                onClick={() => onEdit(user)}
-              >
-                Editar
-              </button>
-              <button
-                className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700"
-                onClick={() => onDelete(user.usuario_id)}
-              >
-                Eliminar
-              </button>
-            </td>
+    <div className="overflow-x-auto rounded-lg shadow-md">
+      <table className="min-w-full border border-gray-300 bg-white rounded-lg overflow-hidden">
+        <thead>
+          <tr className="bg-gray-200 text-gray-800 text-sm uppercase text-left">
+            <th className="px-4 py-2 border">Num</th>
+            <th className="px-4 py-2 border">Nombre</th>
+            <th className="px-4 py-2 border">Usuario</th>
+            <th className="px-4 py-2 border">Roles</th>
+            <th className="px-4 py-2 border text-center">Acciones</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {usuarios.map((user, index) => (
+            <tr
+              key={user.usuario_id}
+              className="hover:bg-gray-100 transition-colors text-gray-700"
+            >
+              <td className="px-4 py-2 border">{index + 1}</td>
+              <td className="px-4 py-2 border">
+                {user.nombre} {user.apellido_paterno}
+              </td>
+              <td className="px-4 py-2 border">{user.username}</td>
+              <td className="px-4 py-2 border">
+                {user.roles?.map(getRoleName).join(", ") || "Sin rol"}
+              </td>
+              <td className="px-4 py-2 border text-center">
+                <div className="flex justify-center space-x-3">
+                 
+                 
+                  {/* Ver */}
+                  <button
+                    title="Ver"
+                    className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 shadow-md transition-transform transform hover:scale-110"
+                    onClick={() => onView(user)}
+                  >
+                    <FaEye size={16} />
+                  </button>
+
+                  {/* Solo Admin puede Editar o Eliminar */}
+                  {isAdmin && (
+                    <>
+                      <button
+                        title="Editar"
+                        className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 shadow-md transition-transform transform hover:scale-110"
+                        onClick={() => onEdit(user)}
+                      >
+                        <FaEdit size={16} />
+                      </button>
+
+                      <button
+                        title="Eliminar"
+                        className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md transition-transform transform hover:scale-110"
+                        onClick={() => onDelete(user.usuario_id)}
+                      >
+                        <FaTrash size={16} />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
