@@ -1,9 +1,0 @@
-// MODELO
-// Aquí definimos la "forma" de nuestros datos.
-// En este caso, un usuario con id, nombre y email.
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-}

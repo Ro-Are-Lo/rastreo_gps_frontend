@@ -1,5 +1,5 @@
 // src/viewmodels/useUserViewModel.ts
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { User } from '../models/User';
 import {
   getUsuarios,
@@ -40,10 +40,6 @@ export const useUserViewModel = () => {
       prev.map(u => (u.usuario_id === id ? actualizado : u))
     );
   };
-
-  useEffect(() => {
-    fetchUsuarios();
-  }, []);
 
   return {
     usuarios,

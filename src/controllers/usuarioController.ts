@@ -1,12 +1,12 @@
 // src/controllers/usuarioController.ts
-import { usuarioService } from '../services/usuarioService';
-import { Usuario } from '../types/Usuario';
+import * as usuarioService from '../services/usuarioService';
+import type { User } from '../models/User';
 
 export const usuarioController = {
-  obtenerUsuarios: async (setUsuarios: (u: Usuario[]) => void, setCargando: (c: boolean) => void) => {
+  obtenerUsuarios: async (setUsuarios: (u: User[]) => void, setCargando: (c: boolean) => void) => {
     setCargando(true);
     try {
-      const data = await usuarioService.listarUsuarios();
+      const data = await usuarioService.getUsuarios();
       setUsuarios(data);
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
@@ -17,7 +17,7 @@ export const usuarioController = {
 
   eliminarUsuario: async (id: number, recargar: () => void) => {
     if (confirm('¿Seguro que deseas eliminar este usuario?')) {
-      await usuarioService.eliminarUsuario(id);
+      await usuarioService.deleteUsuario(id);
       recargar();
     }
   },
