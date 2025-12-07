@@ -1,65 +1,78 @@
-// src/context/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect } from "react";
-import type { User } from "../models/User";
+// src/context/AuthContext.tsx - CORREGIDO
+import { createContext, useContext, useState } from 'react';
+import type { ReactNode } from 'react'; // ✅ Import type-only
+import { login as loginService } from '../services/authService'; // ✅ Importar servicio
+
 
 interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  login: (user: User, token: string) => void;
+  user: any | null;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => void;
-  isAuthenticated: boolean;
+  setUser: (user: any) => void;
+  isAuthenticated: boolean; // ✅ Agregar esta propiedad
 }
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Recuperar sesión de localStorage
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
 
-    if (storedUser && storedToken) {
-      const parsedUser: User = JSON.parse(storedUser);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe usarse dentro de AuthProvider');
+  }
+  return context;
+};
 
-      // Asegurarnos de que roles siempre sea array de strings
-      if (!parsedUser.roles) parsedUser.roles = [];
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-      setUser(parsedUser);
-      setToken(storedToken);
+
+
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<any>(() => {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  });
+
+  // ✅ Ahora SÍ usa los parámetros
+  const login = async (username: string, password: string) => {
+    try {
+      const response = await loginService(username, password);
+      
+      if (response.success) {
+        const userData = response.usuario;
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', response.token);
+      } else {
+        throw new Error('Login falló');
+      }
+    } catch (error) {
+      throw error;
     }
-  }, []);
-
-  const login = (user: User, token: string) => {
-    // Asegurarnos de que roles siempre sea array de strings
-    if (!user.roles) user.roles = [];
-
-    setUser(user);
-    setToken(token);
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", token);
   };
 
   const logout = () => {
     setUser(null);
-    setToken(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    setToken(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  };
+
+  const value: AuthContextType = {
+    user,
+    login,
+    logout,
+    setUser,
+    isAuthenticated: !!user
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated: !!token }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth debe usarse dentro de AuthProvider");
-  return context;
 };

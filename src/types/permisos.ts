@@ -1,16 +1,41 @@
-// rastreo_gps_frontend/src/types/permisos.ts
-export type Role = "admin" | "conductor" | "usuario";
+// src/types/permisos.ts
+export type Role = 'ADMIN' | 'CONDUCTOR' | 'SUPERVISOR';
 
 export interface ViewPermission {
-  name: string;
   key: string;
+  name: string;
   rolesAllowed: Role[];
 }
 
 export const viewsPermissions: ViewPermission[] = [
-  { name: "Usuarios", key: "usuarios", rolesAllowed: ["admin"] },
-  { name: "Conductor", key: "conductor", rolesAllowed: ["conductor"] },
-  { name: "Vehículos", key: "vehiculos", rolesAllowed: ["admin", "conductor", "usuario"] },
-  { name: "Configuración", key: "configuracion", rolesAllowed: ["admin"] },
-  { name: "Mapa", key: "mapa", rolesAllowed: ["admin", "conductor", "usuario"] },
+  {
+    key: 'mapa',
+    name: 'Mapa',
+    rolesAllowed: ['ADMIN', 'CONDUCTOR', 'SUPERVISOR'],
+  },
+  {
+    key: 'usuarios',
+    name: 'Usuarios',
+    rolesAllowed: ['ADMIN'],
+  },
+  {
+    key: 'vehiculos',
+    name: 'Vehículos',
+    rolesAllowed: ['ADMIN', 'SUPERVISOR'],
+  },
+  {
+    key: 'rutas',
+    name: 'Rutas',
+    rolesAllowed: ['ADMIN', 'SUPERVISOR'],
+  },
+  {
+    key: 'reportes',
+    name: 'Reportes',
+    rolesAllowed: ['ADMIN'],
+  },
+  {
+    key: 'configuracion',
+    name: 'Configuración',
+    rolesAllowed: ['ADMIN'],
+  },
 ];

@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { login } from '../services/authService';
-import { User } from '../models/User';
+import type { User } from '../models/User';
 
 export function useLoginViewModel() {
   const [username, setUsername] = useState('');

@@ -1,20 +1,19 @@
-// src/pages/UsersPage.tsx
-import React, { useEffect, useState } from 'react';
-import { User, } from '../models/User';
+// src/pages/UsersPage.tsx - VERSIÓN SIMPLIFICADA
+import { useEffect, useState } from 'react';
+import type { User } from '../models/User';
 import { getUsuarios, deleteUsuario } from '../services/usuarioService';
-import TablaUsuarios from '../components/TablaUsuarios';
-import UserModal from '../components/UserModal';
 import UserCreateModal from '../components/UserCreateModal';
 import UserEditModal from '../components/UserEditModal';
+import UserViewModal from '../components/UserViewModal'; // Si existe
 
 const UsersPage: React.FC = () => {
   const [usuarios, setUsuarios] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Traer usuarios
   const fetchUsuarios = async () => {
     setLoading(true);
     try {
@@ -32,19 +31,16 @@ const UsersPage: React.FC = () => {
     fetchUsuarios();
   }, []);
 
-  // Crear usuario
   const handleCreate = (usuario: User) => {
     setUsuarios(prev => [...prev, usuario]);
   };
 
-  // Editar usuario
   const handleEdit = (usuario: User) => {
     setUsuarios(prev =>
       prev.map(u => (u.usuario_id === usuario.usuario_id ? usuario : u))
     );
   };
 
-  // Eliminar usuario
   const handleDelete = async (id: number) => {
     if (!window.confirm('¿Seguro quieres eliminar este usuario?')) return;
     try {
@@ -56,23 +52,12 @@ const UsersPage: React.FC = () => {
     }
   };
 
-  // Abrir modal editar
-  const openEditModal = (usuario: User) => {
-    setSelectedUser(usuario);
-    setEditModalOpen(true);
-  };
-
-  // Abrir modal ver
-  const openViewModal = (usuario: User) => {
-    setSelectedUser(usuario);
-  };
-
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Usuarios</h1>
         <button
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition-colors"
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
           onClick={() => setCreateModalOpen(true)}
         >
           Crear Usuario
@@ -82,20 +67,68 @@ const UsersPage: React.FC = () => {
       {loading ? (
         <p>Cargando usuarios...</p>
       ) : (
-        <TablaUsuarios
-          usuarios={usuarios}
-          onEliminar={handleDelete}
-          onEditar={openEditModal}
-          onVer={openViewModal}
-        />
+        <table className="min-w-full border border-gray-300">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border p-2">ID</th>
+              <th className="border p-2">Nombre</th>
+              <th className="border p-2">Usuario</th>
+              <th className="border p-2">Roles</th>
+              <th className="border p-2">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usuarios.map(user => (
+              <tr key={user.usuario_id}>
+                <td className="border p-2">{user.usuario_id}</td>
+                <td className="border p-2">{user.nombre} {user.apellido_paterno}</td>
+                <td className="border p-2">{user.username}</td>
+                <td className="border p-2">{user.roles?.join(', ')}</td>
+                <td className="border p-2 space-x-2">
+                  <button 
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setViewModalOpen(true);
+                    }}
+                    className="px-2 py-1 bg-blue-500 text-white rounded"
+                  >
+                    Ver
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setEditModalOpen(true);
+                    }}
+                    className="px-2 py-1 bg-yellow-500 text-white rounded"
+                  >
+                    Editar
+                  </button>
+                  <button 
+                    onClick={() => user.usuario_id && handleDelete(user.usuario_id)}
+                    className="px-2 py-1 bg-red-500 text-white rounded"
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
 
-      {selectedUser && !editModalOpen && (
-        <UserModal usuario={selectedUser} onClose={() => setSelectedUser(null)} />
+      {viewModalOpen && selectedUser && (
+        <UserViewModal
+          usuario={selectedUser}
+          onClose={() => {
+            setViewModalOpen(false);
+            setSelectedUser(null);
+          }}
+        />
       )}
 
       {createModalOpen && (
         <UserCreateModal
+          isOpen={createModalOpen}
           onClose={() => setCreateModalOpen(false)}
           onCreate={handleCreate}
         />

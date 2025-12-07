@@ -2,7 +2,7 @@
 // Aquí van elementos UI genéricos (botones, inputs, tarjetas).
 // Son independientes de un ViewModel específico.
 
-import React from "react";
+
 
 type ButtonProps = {
   text: string;
